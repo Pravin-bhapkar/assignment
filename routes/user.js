@@ -38,6 +38,51 @@ router.post('/sendMessage', function(req, res) {
   	//res.send('respond with a resource');
 });
 
+router.post('/events', function(req, res) {
+	log.trace("[users] >> eventsevents >>  ");
+	log.debug("[users] >> sendMessage >> event send by device >> ",req.body);
+
+	var nodemailer = require('nodemailer');
+
+	var config = {
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
+    auth: {
+        user: "mymail@gmail.com",  //Use your configuration email address
+        pass: "my password"  //Use your password
+    }
+};
+ 
+// create reusable transporter object using the default SMTP transport 
+var transporter = nodemailer.createTransport(config);
+ 
+// setup e-mail data with unicode symbols 
+var mailOptions = {
+    from: '"Pravin Bhapkar" <pravinlogicap@gmail.com>', // sender address 
+    to: 'pravinlogicap@gmail.com', // list of receivers 
+    subject: 'Event genrated for device', // Subject line 
+    text: 'Hello There,  IOT event genrated for you', // plaintext body 
+    html: '<b>Hello there, Here is the event </b>' // html body 
+};
+ 
+// send mail with defined transport object 
+transporter.sendMail(mailOptions, function(error, info){
+    if(error){
+         log.error("Error while sending event  "+error);
+         res.send({"success" : false,"error" : error});
+
+    }else{
+    	log.trace('Message sent: ' + info.response);
+
+    	//Along with this we can store events in file as well.
+    	res.send({"success" : true,"msg" : "mail sent"});
+    }
+    	
+});
+
+
+});	
 
 function saveResponseInDB(data,callback){
 	log.trace("start");
